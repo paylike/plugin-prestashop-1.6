@@ -28,7 +28,7 @@
         var popup_title 	    = "{$popup_title|escape:'htmlall':'UTF-8'}";
         var popup_description 	= "{$popup_description}";
         var currency_code 		= "{$currency_code|escape:'htmlall':'UTF-8'}";
-        var amount 				= "{$amount|escape:'htmlall':'UTF-8'}";
+        var amount              = "{$amount|escape:'htmlall':'UTF-8'}";
         var id_cart 			= {$id_cart}; //html variable can not be escaped;
         var products            = {$products}; //html variable can not be escaped;
         var name 				= "{$name|escape:'htmlall':'UTF-8'}";

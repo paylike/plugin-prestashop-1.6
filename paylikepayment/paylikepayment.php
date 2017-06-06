@@ -504,7 +504,8 @@ class PaylikePayment extends PaymentModule
                     array(
                         'type' => 'select',
                         'lang' => true,
-                        'label' => '<span data-toggle="tooltip" title="'.$this->l('The transaction will be captured once the order has the chosen status').'">'.$this->l('Capture on order status (delayed mode)').'<i class="process-icon-help-new help-icon" aria-hidden="true"></i></span>',
+                        //'label' => '<span data-toggle="tooltip" title="'.$this->l('The transaction will be captured once the order has the chosen status').'">'.$this->l('Capture on order status (delayed mode)').'<i class="process-icon-help-new help-icon" aria-hidden="true"></i></span>',
+                        'label' => '<span data-toggle="tooltip" title="'.$this->l('The status on which the order will be set once it gets the payment captured').'">'.$this->l('Order status after capture').'<i class="process-icon-help-new help-icon" aria-hidden="true"></i></span>',
                         'name' => 'PAYLIKE_ORDER_STATUS',
                         'class' => 'paylike-config',
                         'options' => array(
@@ -766,6 +767,10 @@ class PaylikePayment extends PaymentModule
             $popup_description = implode(", & ", $products_label);
         }
 
+        $cart = $this->context->cart;
+        $total = $cart->getOrderTotal(true, Cart::BOTH);
+        echo "Total : ".$total;
+        //die();
         $amount = $params['cart']->getOrderTotal() * 100;//paid amounts with 100 to handle paylike's decimals
         $currency = new Currency((int)$params['cart']->id_currency);
         $currency_code = $currency->iso_code;
@@ -926,7 +931,9 @@ class PaylikePayment extends PaymentModule
                             } else {
                                 if (!empty($capture['transaction'])) {
                                     //Update order status
-                                    $order->setCurrentState((int)Configuration::get('PS_OS_PAYMENT'), $this->context->employee->id);
+                                    //$status_paid = (int)Configuration::get('PS_OS_PAYMENT');
+                                    $status_paid = (int)Configuration::get('PAYLIKE_ORDER_STATUS');
+                                    $order->setCurrentState($status_paid, $this->context->employee->id);
 
                                     //Update transaction details
                                     $fields = array(

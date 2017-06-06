@@ -77,7 +77,7 @@ $(document).ready(function() {
             dataType: 'JSON',
             success: function(response) {
                 $(e.currentTarget).button('reset');
-                console.log(response);
+                //console.log(response);
 
                 if(response.hasOwnProperty('success') && response.hasOwnProperty('message')) {
                     var message = response.message;
@@ -89,6 +89,7 @@ $(document).ready(function() {
                             .removeClass('alert-danger')
                             .addClass('alert-success');
                     $('#alert').show();
+                    window.location = window.location;
 
                 } else if(response.hasOwnProperty('warning') && response.hasOwnProperty('message')) {
                     var message = response.message;
