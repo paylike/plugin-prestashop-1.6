@@ -7,11 +7,12 @@
 *}
 {if $paylike_status == 'enabled'}
     <style type="text/css">
-        .cards{
+        .cards {
             display: inline-flex;
         }
+
         .cards li img {
-            vertical-align: middle; 
+            vertical-align: middle;
             margin-right: 10px;
             width: 37px;
             height: 27px;
@@ -19,68 +20,71 @@
     </style>
     <script type="text/javascript" src="https://sdk.paylike.io/3.js"></script>
     <script>
-        var PAYLIKE_PUBLIC_KEY 	= "{$PAYLIKE_PUBLIC_KEY|escape:'htmlall':'UTF-8'}";
-        var paylike 			= Paylike(PAYLIKE_PUBLIC_KEY);
-        var shop_name 			= "{$shop_name|escape:'htmlall':'UTF-8'}";
-        var PS_SSL_ENABLED 		= "{$PS_SSL_ENABLED|escape:'htmlall':'UTF-8'}";
-        var host 				= "{$http_host|escape:'htmlall':'UTF-8'}";
-        var BASE_URI 			= "{$base_uri|escape:'htmlall':'UTF-8'}";
-        var popup_title 	    = "{$popup_title|escape:'htmlall':'UTF-8'}";
-        var popup_description 	= "{$popup_description}";
-        var currency_code 		= "{$currency_code|escape:'htmlall':'UTF-8'}";
-        var amount              = "{$amount|escape:'htmlall':'UTF-8'}";
-        var id_cart 			= {$id_cart}; //html variable can not be escaped;
-        var products            = {$products}; //html variable can not be escaped;
-        var name 				= "{$name|escape:'htmlall':'UTF-8'}";
-        var email 				= "{$email|escape:'htmlall':'UTF-8'}";
-        var telephone 			= "{$telephone|escape:'htmlall':'UTF-8'}";
-        var address 			= "{$address|escape:'htmlall':'UTF-8'}";
-        var ip 			        = "{$ip|escape:'htmlall':'UTF-8'}";
-        var locale 			    = "{$locale|escape:'htmlall':'UTF-8'}";
-        var platform_version 	= "{$platform_version|escape:'htmlall':'UTF-8'}";
-        var ecommerce 	        = "{$ecommerce|escape:'htmlall':'UTF-8'}";
-        var module_version 	    = "{$module_version|escape:'htmlall':'UTF-8'}";
-        var url_controller 		= "{$redirect_url|escape:'htmlall':'UTF-8'}";
-        var qry_str				= "{$qry_str}";
+        var PAYLIKE_PUBLIC_KEY = "{$PAYLIKE_PUBLIC_KEY|escape:'htmlall':'UTF-8'}";
+        var paylike = Paylike(PAYLIKE_PUBLIC_KEY);
+        var shop_name = "{$shop_name|escape:'htmlall':'UTF-8'}";
+        var PS_SSL_ENABLED = "{$PS_SSL_ENABLED|escape:'htmlall':'UTF-8'}";
+        var host = "{$http_host|escape:'htmlall':'UTF-8'}";
+        var BASE_URI = "{$base_uri|escape:'htmlall':'UTF-8'}";
+        var popup_title = "{$popup_title|escape:'htmlall':'UTF-8'}";
+        var popup_description = "{$popup_description nofilter}"; //html variable can not be escaped;
+        var currency_code = "{$currency_code|escape:'htmlall':'UTF-8'}";
+        var amount = "{$amount|escape:'htmlall':'UTF-8'}";
+        var id_cart = {$id_cart}; //html variable can not be escaped;
+        var products = {$products}; //html variable can not be escaped;
+        var name = "{$name|escape:'htmlall':'UTF-8'}";
+        var email = "{$email|escape:'htmlall':'UTF-8'}";
+        var telephone = "{$telephone|escape:'htmlall':'UTF-8'}";
+        var address = "{$address|escape:'htmlall':'UTF-8'}";
+        var ip = "{$ip|escape:'htmlall':'UTF-8'}";
+        var locale = "{$locale|escape:'htmlall':'UTF-8'}";
+        var platform_version = "{$platform_version|escape:'htmlall':'UTF-8'}";
+        var ecommerce = "{$ecommerce|escape:'htmlall':'UTF-8'}";
+        var module_version = "{$module_version|escape:'htmlall':'UTF-8'}";
+        var url_controller = "{$redirect_url|escape:'htmlall':'UTF-8'}";
+        var qry_str = "{$qry_str}"; //html variable can not be escaped;
 
-        function pay()
-        {
+        function pay() {
             paylike.popup({
-                        currency    : currency_code,
-                        amount      : amount,
-                        title       : popup_title,
-                        description : popup_description,
-                        custom      : {
-                            cartId              : id_cart,
-                            products            : products,
-                            name                : name,
-                            email               : email,
-                            telephone           : telephone,
-                            address             : address,
-                            customerIp          : ip
+                    currency: currency_code,
+                    amount: amount,
+                    title: popup_title,
+                    description: popup_description,
+                    custom: {
+                        orderId: id_cart,
+                        products: products,
+                        customer: {
+                            name: name,
+                            email: email,
+                            telephone: telephone,
+                            address: address,
+                            customerIp: ip
                         },
-                        locale              : locale,
-                        platform_version    : platform_version,
-                        ecommerce           : ecommerce,
-                        version             : module_version
+                        platform:{
+                            version: platform_version,
+                            name: ecommerce
+                        },
+                        ecommerce:{
+                            version: platform_version,
+                            name: ecommerce
+                        },
+                        version: module_version
 
                     },
-                    function(err , r)
-                    {
-                        if (typeof r !== 'undefined')
-                        {
-                            var return_url = url_controller + qry_str + 'transactionid=' + r.transaction.id;
-                            if (err)
-                            {
-                                return console.warn(err);
-                            }
-                            location.href = htmlDecode(return_url);
+
+                },
+                function (err, r) {
+                    if (typeof r !== 'undefined') {
+                        var return_url = url_controller + qry_str + 'transactionid=' + r.transaction.id;
+                        if (err) {
+                            return console.warn(err);
                         }
-                    });
+                        location.href = htmlDecode(return_url);
+                    }
+                });
         }
 
-        function htmlDecode(url)
-        {
+        function htmlDecode(url) {
             return String(url).replace(/&amp;/g, '&');
         }
     </script>
@@ -105,15 +109,17 @@
             position: relative;
             cursor:pointer;
             margin-top: 10px;
-            " onclick="pay();" >
-                <input style="float:left;" id="paylike-btn" type="image" name="submit" src="{$this_path_paylike}logo.png" alt="" style="vertical-align: middle; margin-right: 10px; width:57px; height:57px;" />
+            " onclick="pay();">
+                <input style="float:left;" id="paylike-btn" type="image" name="submit"
+                       src="{$this_path_paylike}logo.png" alt=""
+                       style="vertical-align: middle; margin-right: 10px; width:57px; height:57px;"/>
                 <div style="float:left; margin-left:10px;">
                     <span style="margin-right: 10px;">{l s={$payment_method_title} mod='paylikepayment'}</span>
                     <span>
                         <ul class="cards">
                             {foreach from=$payment_method_creditcard_logo item=logo}
                                 <li>
-                                    <img src="{$this_path_paylike}/logos/{$logo}" title="{$logo}" alt="{$logo}"/>
+                                    <img src="{$this_path_paylike}/views/img/{$logo}" title="{$logo}" alt="{$logo}"/>
                                 </li>
                             {/foreach}
                         </ul>

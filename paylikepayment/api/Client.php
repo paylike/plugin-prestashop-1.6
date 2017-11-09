@@ -1,16 +1,28 @@
 <?php
+/**
+ *
+ * @author    DerikonDevelopment <ionut@derikon.com>
+ * @copyright Copyright (c) permanent, DerikonDevelopment
+ * @license   Addons PrestaShop license limitation
+ * @version   1.0.0
+ * @link      http://www.derikon.com/
+ *
+ */
+
 namespace Paylike;
-include_once( 'Adapter.php' );
-include_once( 'Transaction.php' );
-include_once( 'Card.php' );
+
+include_once('Adapter.php');
+include_once('Transaction.php');
+include_once('Card.php');
 
 /**
  * Class Client
  * @package Paylike
  * Manages the app creation.
  */
-if ( ! class_exists( 'Paylike\\Client' ) ) {
-    class Client {
+if (!class_exists('Paylike\\Client')) {
+    class Client
+    {
 
         /**
          * @var
@@ -25,8 +37,9 @@ if ( ! class_exists( 'Paylike\\Client' ) ) {
          * @param $privateApiKey
          * Set the api key for future calls
          */
-        public static function setKey( $privateApiKey ) {
-            self::$adapter = new Adapter( $privateApiKey );
+        public static function setKey($privateApiKey)
+        {
+            self::$adapter = new Adapter($privateApiKey);
         }
 
         /**
@@ -35,17 +48,17 @@ if ( ! class_exists( 'Paylike\\Client' ) ) {
          *
          * @return bool|null|Adapter
          */
-        public static function getAdapter( $privateApiKey = null ) {
-            if ( self::$adapter ) {
+        public static function getAdapter($privateApiKey = null)
+        {
+            if (self::$adapter) {
                 return self::$adapter;
             } else {
-                if ( $privateApiKey ) {
-                    return new Adapter( $privateApiKey );
+                if ($privateApiKey) {
+                    return new Adapter($privateApiKey);
                 } else {
                     return false;
                 }
             }
         }
-
     }
 }

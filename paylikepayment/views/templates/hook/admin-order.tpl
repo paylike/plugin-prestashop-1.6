@@ -43,15 +43,15 @@ $(document).ready(function() {
             var html = '';
 
             if(refund_amount == '' && refund_reason == '') {
-                var html = '<strong>Warning!</strong> Please give both refund amount and refund reason.';
+                var html = '<strong>Warning!</strong> Refund requires an amount and an refund reason.';
                 errorFlag = true;
 
             } else if(refund_amount == '') {
-                var html = '<strong>Warning!</strong> Please give refund amount.';
+                var html = '<strong>Warning!</strong> Please provide the refund amount.';
                 errorFlag = true;
 
             } else if(refund_reason == '') {
-                var html = '<strong>Warning!</strong> Please give refund reason.';
+                var html = '<strong>Warning!</strong> Please provide the refund reason.';
                 errorFlag = true;
             }
         }
@@ -144,10 +144,10 @@ $(document).ready(function() {
 
 				<div class="form-group margin-form">
 					<div class="col-md-6">
-						<input class="form-control" name="paylike_amount_to_refund" style="display: none;" placeholder="{l s='Amount to refund' mod='paylikepayment'}" type="text"/>
+						<input class="form-control" name="paylike_amount_to_refund" style="display: none;" placeholder="{l s='Input refund amount' mod='paylikepayment'}" type="text"/>
 					</div>
 					<div class="col-md-6">
-						<input class="form-control" name="paylike_refund_reason" style="display: none;" placeholder="{l s='Refund reason' mod='paylikepayment'}" type="text"/>
+						<input class="form-control" name="paylike_refund_reason" style="display: none;" placeholder="{l s='Input refund reason' mod='paylikepayment'}" type="text"/>
 					</div>
 				</div>
 
