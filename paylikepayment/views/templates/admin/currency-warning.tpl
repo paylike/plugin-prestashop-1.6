@@ -8,7 +8,7 @@
  *
  *}
 <p class="alert alert-danger">
-    {l s='Note: Due to prestashop standards we need to abide to, currencies decimals must match the paylike supported decimals. In order to use the Paylike module for the following currencies, you\'ll need to set "Number of decimals" option to the number shown bellow from tab. Since this is a global setting that affects all currencies you cannot use at the same time currencies with different decimals, with the exception of no decimals, which can be applied to a currency.' mod='paylikepayment'}
+    {l s='Note: Due to prestashop standards we need to abide to, currencies decimals must match the paylike supported decimals. In order to use the Paylike module for the following currencies, you\'ll need to set "Number of decimals" option to the number shown bellow from tab. Since this is a global setting that affects all currencies you cannot use at the same time currencies with different decimals.' mod='paylikepayment'}
     <a href="{$preferences_url}">{l s='Preferences -> General' mod='paylikepayment'}</a>
     <br>
     {foreach from=$warning_currencies_decimal key=decimals item=currency}
