@@ -26,7 +26,7 @@
         var PS_SSL_ENABLED = "{$PS_SSL_ENABLED|escape:'htmlall':'UTF-8'}";
         var host = "{$http_host|escape:'htmlall':'UTF-8'}";
         var BASE_URI = "{$base_uri|escape:'htmlall':'UTF-8'}";
-        var popup_title = "{$popup_title|escape:'htmlall':'UTF-8'}";
+        var popup_title = "{$popup_title nofilter}";
         var popup_description = "{$popup_description nofilter}"; //html variable can not be escaped;
         var currency_code = "{$currency_code|escape:'htmlall':'UTF-8'}";
         var amount = "{$amount|escape:'htmlall':'UTF-8'}";

@@ -4,7 +4,7 @@
  * @author    DerikonDevelopment <ionut@derikon.com>
  * @copyright Copyright (c) permanent, DerikonDevelopment
  * @license   Addons PrestaShop license limitation
- * @version   1.0.2
+ * @version   1.0.3
  * @link      http://www.derikon.com/
  *
  */
@@ -62,11 +62,11 @@ class PaylikepaymentPaymentReturnModuleFrontController extends ModuleFrontContro
         }
 
         Paylike\Client::setKey(Configuration::get('PAYLIKE_SECRET_KEY'));
-        $total = $cart->getOrderTotal(true, Cart::BOTH);
+        $cart_total = $cart->getOrderTotal(true, Cart::BOTH);
         $currency = new Currency((int)$cart->id_currency);
         $decimals = (int)$currency->decimals * _PS_PRICE_COMPUTE_PRECISION_;
         $currency_multiplier = $this->module->getPaylikeCurrencyMultiplier($currency->iso_code);
-        $amount = ceil(Tools::ps_round($total, $decimals) * $currency_multiplier);
+        $cart_amount = ceil(Tools::ps_round($cart_total, 2) * $currency_multiplier);
         $transactionid = Tools::getValue('transactionid');
 
         $transaction_failed = false;
@@ -84,7 +84,7 @@ class PaylikepaymentPaymentReturnModuleFrontController extends ModuleFrontContro
         } else {
             if (!empty($fetch['transaction'])) {
                 $transaction = $fetch['transaction'];
-                if ((string)$transaction['amount'] != (string)$amount || $transaction['currency'] != $currency->iso_code) {
+                if ((string)$transaction['amount'] != (string)$cart_amount || $transaction['currency'] != $currency->iso_code) {
                     PrestaShopLogger::addLog('Invalid transaction.');
                     $this->context->smarty->assign(array(
                         'paylike_order_error' => 1,
@@ -97,6 +97,9 @@ class PaylikepaymentPaymentReturnModuleFrontController extends ModuleFrontContro
                         Captured Amount: '.($fetch['transaction']['capturedAmount'] / $currency_multiplier).'
                         Order time: '.$fetch['transaction']['created'].'
                         Currency code: '.$fetch['transaction']['currency'];
+
+                    $total = $fetch['transaction']['amount'] / $currency_multiplier;
+                    $amount = $fetch['transaction']['amount'];
                     
                     //$status_paid = Configuration::get('PS_OS_PAYMENT');
                     $status_paid = 3; //Processing in progress
@@ -147,11 +150,11 @@ class PaylikepaymentPaymentReturnModuleFrontController extends ModuleFrontContro
         }
 
         Paylike\Client::setKey(Configuration::get('PAYLIKE_SECRET_KEY'));
-        $total = $cart->getOrderTotal(true, Cart::BOTH);
+        $cart_total = $cart->getOrderTotal(true, Cart::BOTH);
         $currency = new Currency((int)$cart->id_currency);
         $decimals = (int)$currency->decimals * _PS_PRICE_COMPUTE_PRECISION_;
         $currency_multiplier = $this->module->getPaylikeCurrencyMultiplier($currency->iso_code);
-        $amount = ceil(Tools::ps_round($total, $decimals) * $currency_multiplier);
+        $cart_amount = ceil(Tools::ps_round($cart_total, $decimals) * $currency_multiplier);
         //$status_paid = (int)Configuration::get('PAYLIKE_ORDER_STATUS');
         //$status_paid = Configuration::get('PS_OS_PAYMENT');
         $transactionid = Tools::getValue('transactionid');
@@ -169,7 +172,7 @@ class PaylikepaymentPaymentReturnModuleFrontController extends ModuleFrontContro
         } else {
             if (!empty($fetch['transaction'])) {
                 $transaction = $fetch['transaction'];
-                if ((string)$transaction['amount'] != (string)$amount || $transaction['currency'] != $currency->iso_code ) {
+                if ((string)$transaction['amount'] != (string)$cart_amount || $transaction['currency'] != $currency->iso_code ) {
                     PrestaShopLogger::addLog('Invalid transaction.');
                     $this->context->smarty->assign(array(
                         'paylike_order_error' => 1,
@@ -179,54 +182,48 @@ class PaylikepaymentPaymentReturnModuleFrontController extends ModuleFrontContro
                 } else {
                     $status_paid = (int)Configuration::get('PAYLIKE_ORDER_STATUS');
 
-                    $validOrder = $this->module->validateOrder((int)$cart->id, $status_paid, $total, $this->module->displayName, null, array(), null, false, $customer->secure_key);
+                    $data = array(
+                        'currency' => $currency->iso_code,
+                        'amount' => $cart_amount,
+                    );
+                    $capture = Paylike\Transaction::capture($transactionid, $data);
 
-                    if ($validOrder) {
-                        $data = array(
-                            'currency' => $currency->iso_code,
-                            'amount' => $amount,
-                        );
+                    if (is_array($capture) && !empty($capture['error']) && $capture['error'] == 1) {
+                        PrestaShopLogger::addLog($capture['message']);
+                        $this->context->smarty->assign(array(
+                            'paylike_order_error' => 1,
+                            'paylike_error_message' => $capture['message']
+                        ));
+                        return $this->setTemplate('payment_error.tpl');
+                    } else if (!empty($capture['transaction'])) {
 
-                        $capture = Paylike\Transaction::capture($transactionid, $data);
+                        $total = $capture['transaction']['amount'] / $currency_multiplier;
+                        $amount = $capture['transaction']['amount'];
 
-                        if (is_array($capture) && !empty($capture['error']) && $capture['error'] == 1) {
-                            PrestaShopLogger::addLog($capture['message']);
-                            $this->context->smarty->assign(array(
-                                'paylike_order_error' => 1,
-                                'paylike_error_message' => $capture['message']
-                            ));
-                            return $this->setTemplate('payment_error.tpl');
-                        } else if (!empty($capture['transaction'])) {
-                            $message = 'Trx ID: '.$transactionid.'
-                                Authorized Amount: '.($capture['transaction']['amount'] / $currency_multiplier).'
-                                Captured Amount: '.($capture['transaction']['capturedAmount'] / $currency_multiplier).'
-                                Order time: '.$capture['transaction']['created'].'
-                                Currency code: '.$capture['transaction']['currency'];
+                        $validOrder = $this->module->validateOrder((int)$cart->id, $status_paid, $total, $this->module->displayName, null, array(), null, false, $customer->secure_key);
+                        
+                        $message = 'Trx ID: '.$transactionid.'
+                            Authorized Amount: '.($capture['transaction']['amount'] / $currency_multiplier).'
+                            Captured Amount: '.($capture['transaction']['capturedAmount'] / $currency_multiplier).'
+                            Order time: '.$capture['transaction']['created'].'
+                            Currency code: '.$capture['transaction']['currency'];
 
-                            $msg = new Message();
-                            $message = strip_tags($message, '<br>');
-                            if (Validate::isCleanHtml($message)) {
-                                $msg->message = $message;
-                                $msg->id_cart = (int)$cart->id;
-                                $msg->id_customer = (int)$cart->id_customer;
-                                $msg->id_order = (int)$this->module->currentOrder;
-                                $msg->private = 1;
-                                $msg->add();
-                            }
-
-                            $this->module->storeTransactionID($transactionid, $this->module->currentOrder, $total, $captured = 'YES');
-                            $redirectLink = __PS_BASE_URI__.'index.php?controller=order-confirmation&id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key;
-                            Tools::redirectLink($redirectLink);
-                        } else {
-                            Paylike\Transaction::void($transactionid, array('amount' => $fetch['transaction']['amount'])); //Cancel Order
-                            PrestaShopLogger::addLog('Invalid transaction.');
-                            $this->context->smarty->assign(array(
-                                'paylike_order_error' => 1,
-                                'paylike_error_message' => 'Invalid transaction.'
-                            ));
-                            return $this->setTemplate('payment_error.tpl');
+                        $msg = new Message();
+                        $message = strip_tags($message, '<br>');
+                        if (Validate::isCleanHtml($message)) {
+                            $msg->message = $message;
+                            $msg->id_cart = (int)$cart->id;
+                            $msg->id_customer = (int)$cart->id_customer;
+                            $msg->id_order = (int)$this->module->currentOrder;
+                            $msg->private = 1;
+                            $msg->add();
                         }
+
+                        $this->module->storeTransactionID($transactionid, $this->module->currentOrder, $total, $captured = 'YES');
+                        $redirectLink = __PS_BASE_URI__.'index.php?controller=order-confirmation&id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key;
+                        Tools::redirectLink($redirectLink);
                     } else {
+                        Paylike\Transaction::void($transactionid, array('amount' => $fetch['transaction']['amount'])); //Cancel Order
                         PrestaShopLogger::addLog('Invalid transaction.');
                         $this->context->smarty->assign(array(
                             'paylike_order_error' => 1,
