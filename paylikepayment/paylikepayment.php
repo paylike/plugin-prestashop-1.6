@@ -4,7 +4,7 @@
  * @author    DerikonDevelopment <ionut@derikon.com>
  * @copyright Copyright (c) permanent, DerikonDevelopment
  * @license   Addons PrestaShop license limitation
- * @version   1.0.3
+ * @version   1.0.4
  * @link      http://www.derikon.com/
  *
  */
@@ -24,24 +24,24 @@ class PaylikePayment extends PaymentModule {
 	protected $statuses_array = array();
 
 	public function __construct() {
-		$this->name       = 'paylikepayment';
-		$this->tab        = 'payments_gateways';
-		$this->version    = '1.0.3';
-		$this->author     = 'DerikonDevelopment';
-		$this->bootstrap  = true;
+		$this->name = 'paylikepayment';
+		$this->tab = 'payments_gateways';
+		$this->version = '1.0.4';
+		$this->author = 'DerikonDevelopment';
+		$this->bootstrap = true;
 		$this->module_key = '1d083bab290f652fb6fb7ae35f9f0942';
 
-		$this->currencies      = true;
+		$this->currencies = true;
 		$this->currencies_mode = 'checkbox';
 
 		parent::__construct();
-		$this->displayName      = $this->l( 'Paylike' );
-		$this->description      = $this->l( 'Receive payment via Paylike' );
+		$this->displayName = $this->l( 'Paylike' );
+		$this->description = $this->l( 'Receive payment via Paylike' );
 		$this->confirmUninstall = $this->l( 'Are you sure about removing Paylike?' );
 	}
 
 	public function install() {
-		$popup_title   = ( ! empty( Configuration::get( 'PS_SHOP_NAME' ) ) ) ? Configuration::get( 'PS_SHOP_NAME' ) : 'Payment';
+		$popup_title = ( ! empty( Configuration::get( 'PS_SHOP_NAME' ) ) ) ? Configuration::get( 'PS_SHOP_NAME' ) : 'Payment';
 		$language_code = $this->context->language->iso_code;
 
 		Configuration::updateValue( 'PAYLIKE_LANGUAGE_CODE', $language_code );
@@ -62,12 +62,12 @@ class PaylikePayment extends PaymentModule {
 		Configuration::updateValue( 'PAYLIKE_SECRET_KEY', '' );
 
 		return ( parent::install()
-		         && $this->registerHook( 'header' )
-		         && $this->registerHook( 'payment' )
-		         && $this->registerHook( 'paymentReturn' )
-		         && $this->registerHook( 'DisplayAdminOrder' )
-		         && $this->registerHook( 'BackOfficeHeader' )
-		         && $this->installDb() );
+			&& $this->registerHook( 'header' )
+			&& $this->registerHook( 'payment' )
+			&& $this->registerHook( 'paymentReturn' )
+			&& $this->registerHook( 'DisplayAdminOrder' )
+			&& $this->registerHook( 'BackOfficeHeader' )
+			&& $this->installDb() );
 	}
 
 	public function installDb() {
@@ -179,17 +179,17 @@ class PaylikePayment extends PaymentModule {
 		$this->html = '';
 		if ( Tools::isSubmit( 'submitPaylike' ) ) {
 			$language_code = Configuration::get( 'PAYLIKE_LANGUAGE_CODE' );
-			$valid         = true;
+			$valid = true;
 
 			$PAYLIKE_PAYMENT_METHOD_TITLE = ! empty( Tools::getvalue( $language_code . '_PAYLIKE_PAYMENT_METHOD_TITLE' ) ) ? Tools::getvalue( $language_code . '_PAYLIKE_PAYMENT_METHOD_TITLE' ) : '';
-			$PAYLIKE_PAYMENT_METHOD_DESC  = ! empty( Tools::getvalue( $language_code . '_PAYLIKE_PAYMENT_METHOD_DESC' ) ) ? Tools::getvalue( $language_code . '_PAYLIKE_PAYMENT_METHOD_DESC' ) : '';
-			$PAYLIKE_POPUP_TITLE          = ( ! empty( Tools::getvalue( $language_code . '_PAYLIKE_POPUP_TITLE' ) ) ) ? Tools::getvalue( $language_code . '_PAYLIKE_POPUP_TITLE' ) : '';
-			$_PAYLIKE_POPUP_DESC          = ( ! empty( Tools::getvalue( $language_code . '_PAYLIKE_POPUP_DESC' ) ) ) ? Tools::getvalue( $language_code . '_PAYLIKE_POPUP_DESC' ) : '';
+			$PAYLIKE_PAYMENT_METHOD_DESC = ! empty( Tools::getvalue( $language_code . '_PAYLIKE_PAYMENT_METHOD_DESC' ) ) ? Tools::getvalue( $language_code . '_PAYLIKE_PAYMENT_METHOD_DESC' ) : '';
+			$PAYLIKE_POPUP_TITLE = ( ! empty( Tools::getvalue( $language_code . '_PAYLIKE_POPUP_TITLE' ) ) ) ? Tools::getvalue( $language_code . '_PAYLIKE_POPUP_TITLE' ) : '';
+			$_PAYLIKE_POPUP_DESC = ( ! empty( Tools::getvalue( $language_code . '_PAYLIKE_POPUP_DESC' ) ) ) ? Tools::getvalue( $language_code . '_PAYLIKE_POPUP_DESC' ) : '';
 
 			if ( empty( $PAYLIKE_PAYMENT_METHOD_TITLE ) ) {
 				$this->context->controller->errors[ $language_code . '_PAYLIKE_PAYMENT_METHOD_TITLE' ] = $this->l( 'Payment method title required!' );
-				$PAYLIKE_PAYMENT_METHOD_TITLE                                                          = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_TITLE' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_TITLE' ) : '';
-				$valid                                                                                 = false;
+				$PAYLIKE_PAYMENT_METHOD_TITLE = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_TITLE' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_TITLE' ) : '';
+				$valid = false;
 			}
 
 			if ( count( Tools::getvalue( 'PAYLIKE_PAYMENT_METHOD_CREDITCARD_LOGO' ) ) > 1 ) {
@@ -202,32 +202,32 @@ class PaylikePayment extends PaymentModule {
 			if ( Tools::getvalue( 'PAYLIKE_TRANSACTION_MODE' ) == 'test' ) {
 				if ( ! Tools::getvalue( 'PAYLIKE_TEST_PUBLIC_KEY' ) ) {
 					$this->context->controller->errors['PAYLIKE_TEST_PUBLIC_KEY'] = $this->l( 'Test mode Public Key is required!' );
-					$PAYLIKE_TEST_PUBLIC_KEY                                      = ( ! empty( Configuration::get( 'PAYLIKE_TEST_PUBLIC_KEY' ) ) ) ? Configuration::get( 'PAYLIKE_TEST_PUBLIC_KEY' ) : '';
-					$valid                                                        = false;
+					$PAYLIKE_TEST_PUBLIC_KEY = ( ! empty( Configuration::get( 'PAYLIKE_TEST_PUBLIC_KEY' ) ) ) ? Configuration::get( 'PAYLIKE_TEST_PUBLIC_KEY' ) : '';
+					$valid = false;
 				} else {
 					$PAYLIKE_TEST_PUBLIC_KEY = ( ! empty( Tools::getvalue( 'PAYLIKE_TEST_PUBLIC_KEY' ) ) ) ? Tools::getvalue( 'PAYLIKE_TEST_PUBLIC_KEY' ) : '';
 				}
 
 				if ( ! Tools::getvalue( 'PAYLIKE_TEST_SECRET_KEY' ) ) {
 					$this->context->controller->errors['PAYLIKE_TEST_SECRET_KEY'] = $this->l( 'Test mode App Key is required!' );
-					$PAYLIKE_TEST_SECRET_KEY                                      = ( ! empty( Configuration::get( 'PAYLIKE_TEST_SECRET_KEY' ) ) ) ? Configuration::get( 'PAYLIKE_TEST_SECRET_KEY' ) : '';
-					$valid                                                        = false;
+					$PAYLIKE_TEST_SECRET_KEY = ( ! empty( Configuration::get( 'PAYLIKE_TEST_SECRET_KEY' ) ) ) ? Configuration::get( 'PAYLIKE_TEST_SECRET_KEY' ) : '';
+					$valid = false;
 				} else {
 					$PAYLIKE_TEST_SECRET_KEY = ( ! empty( Tools::getvalue( 'PAYLIKE_TEST_SECRET_KEY' ) ) ) ? Tools::getvalue( 'PAYLIKE_TEST_SECRET_KEY' ) : '';
 				}
 			} else if ( Tools::getvalue( 'PAYLIKE_TRANSACTION_MODE' ) == 'live' ) {
 				if ( ! Tools::getvalue( 'PAYLIKE_LIVE_PUBLIC_KEY' ) ) {
 					$this->context->controller->errors['PAYLIKE_LIVE_PUBLIC_KEY'] = $this->l( 'Live mode Public Key is required!' );
-					$PAYLIKE_LIVE_PUBLIC_KEY                                      = ( ! empty( Configuration::get( 'PAYLIKE_LIVE_PUBLIC_KEY' ) ) ) ? Configuration::get( 'PAYLIKE_LIVE_PUBLIC_KEY' ) : '';
-					$valid                                                        = false;
+					$PAYLIKE_LIVE_PUBLIC_KEY = ( ! empty( Configuration::get( 'PAYLIKE_LIVE_PUBLIC_KEY' ) ) ) ? Configuration::get( 'PAYLIKE_LIVE_PUBLIC_KEY' ) : '';
+					$valid = false;
 				} else {
 					$PAYLIKE_LIVE_PUBLIC_KEY = ( ! empty( Tools::getvalue( 'PAYLIKE_LIVE_PUBLIC_KEY' ) ) ) ? Tools::getvalue( 'PAYLIKE_LIVE_PUBLIC_KEY' ) : '';
 				}
 
 				if ( ! Tools::getvalue( 'PAYLIKE_LIVE_SECRET_KEY' ) ) {
 					$this->context->controller->errors['PAYLIKE_LIVE_SECRET_KEY'] = $this->l( 'Live mode App Key is required!' );
-					$PAYLIKE_LIVE_SECRET_KEY                                      = ( ! empty( Configuration::get( 'PAYLIKE_LIVE_SECRET_KEY' ) ) ) ? Configuration::get( 'PAYLIKE_LIVE_SECRET_KEY' ) : '';
-					$valid                                                        = false;
+					$PAYLIKE_LIVE_SECRET_KEY = ( ! empty( Configuration::get( 'PAYLIKE_LIVE_SECRET_KEY' ) ) ) ? Configuration::get( 'PAYLIKE_LIVE_SECRET_KEY' ) : '';
+					$valid = false;
 				} else {
 					$PAYLIKE_LIVE_SECRET_KEY = ( ! empty( Tools::getvalue( 'PAYLIKE_LIVE_SECRET_KEY' ) ) ) ? Tools::getvalue( 'PAYLIKE_LIVE_SECRET_KEY' ) : '';
 				}
@@ -267,7 +267,7 @@ class PaylikePayment extends PaymentModule {
 	}
 
 	public function renderCurrencyWarning() {
-		$currencies         = Currency::getCurrencies();
+		$currencies = Currency::getCurrencies();
 		$warning_currencies = array();
 		foreach ( $currencies as $currency ) {
 			if ( $this->getPaylikeCurrencyMultiplier( $currency['iso_code'] ) == 1 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) != 0 ) {
@@ -299,8 +299,8 @@ class PaylikePayment extends PaymentModule {
 
 	public function renderForm() {
 		$this->languages_array = array();
-		$this->statuses_array  = array();
-		$this->logos_array     = array();
+		$this->statuses_array = array();
+		$this->logos_array = array();
 
 		$language_code = Configuration::get( 'PAYLIKE_LANGUAGE_CODE' );
 
@@ -316,7 +316,7 @@ class PaylikePayment extends PaymentModule {
 
 		//Fetch Status list
 		$valid_statuses = array( '2', '3', '4', '5', '12' );
-		$statuses       = OrderState::getOrderStates( (int) $this->context->language->id );
+		$statuses = OrderState::getOrderStates( (int) $this->context->language->id );
 		foreach ( $statuses as $status ) {
 			//$this->statuses_array[$status['id_order_state']] = $status['name'];
 			if ( in_array( $status['id_order_state'], $valid_statuses ) ) {
@@ -535,19 +535,19 @@ class PaylikePayment extends PaymentModule {
 			),
 		);
 
-		$helper                           = new HelperForm();
-		$helper->show_toolbar             = false;
-		$helper->table                    = $this->table;
-		$lang                             = new Language( (int) Configuration::get( 'PS_LANG_DEFAULT' ) );
-		$helper->default_form_language    = $lang->id;
+		$helper = new HelperForm();
+		$helper->show_toolbar = false;
+		$helper->table = $this->table;
+		$lang = new Language( (int) Configuration::get( 'PS_LANG_DEFAULT' ) );
+		$helper->default_form_language = $lang->id;
 		$helper->allow_employee_form_lang = Configuration::get( 'PS_BO_ALLOW_EMPLOYEE_FORM_LANG' ) ? Configuration::get( 'PS_BO_ALLOW_EMPLOYEE_FORM_LANG' ) : 0;
-		$this->fields_form                = array();
+		$this->fields_form = array();
 
-		$helper->identifier    = $this->identifier;
+		$helper->identifier = $this->identifier;
 		$helper->submit_action = 'submitPaylike';
-		$helper->currentIndex  = $this->context->link->getAdminLink( 'AdminModules', false ) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
-		$helper->token         = Tools::getAdminTokenLite( 'AdminModules' );
-		$helper->tpl_vars      = array(
+		$helper->currentIndex = $this->context->link->getAdminLink( 'AdminModules', false ) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
+		$helper->token = Tools::getAdminTokenLite( 'AdminModules' );
+		$helper->tpl_vars = array(
 			'fields_value' => $this->getConfigFieldsValues(),
 			'languages'    => $this->context->controller->getLanguages(),
 			'id_language'  => $this->context->language->id
@@ -569,9 +569,9 @@ class PaylikePayment extends PaymentModule {
 		$creditCardLogo = explode( ',', Configuration::get( 'PAYLIKE_PAYMENT_METHOD_LOGO' ) );
 
 		$payment_method_title = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_TITLE' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_TITLE' ) : ( ! empty( Configuration::get( 'en_PAYLIKE_PAYMENT_METHOD_TITLE' ) ) ? Configuration::get( 'en_PAYLIKE_PAYMENT_METHOD_TITLE' ) : '' );
-		$payment_method_desc  = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_DESC' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_DESC' ) : ( ! empty( Configuration::get( 'en_PAYLIKE_PAYMENT_METHOD_DESC' ) ) ? Configuration::get( 'en_PAYLIKE_PAYMENT_METHOD_DESC' ) : '' );
-		$popup_title          = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_POPUP_TITLE' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_POPUP_TITLE' ) : ( ! empty( Configuration::get( 'en_PAYLIKE_POPUP_TITLE' ) ) ? Configuration::get( 'en_PAYLIKE_POPUP_TITLE' ) : '' );
-		$popup_description    = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_POPUP_DESC' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_POPUP_DESC' ) : ( ! empty( Configuration::get( 'en_PAYLIKE_POPUP_DESC' ) ) ? Configuration::get( 'en_PAYLIKE_POPUP_DESC' ) : '' );
+		$payment_method_desc = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_DESC' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_DESC' ) : ( ! empty( Configuration::get( 'en_PAYLIKE_PAYMENT_METHOD_DESC' ) ) ? Configuration::get( 'en_PAYLIKE_PAYMENT_METHOD_DESC' ) : '' );
+		$popup_title = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_POPUP_TITLE' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_POPUP_TITLE' ) : ( ! empty( Configuration::get( 'en_PAYLIKE_POPUP_TITLE' ) ) ? Configuration::get( 'en_PAYLIKE_POPUP_TITLE' ) : '' );
+		$popup_description = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_POPUP_DESC' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_POPUP_DESC' ) : ( ! empty( Configuration::get( 'en_PAYLIKE_POPUP_DESC' ) ) ? Configuration::get( 'en_PAYLIKE_POPUP_DESC' ) : '' );
 
 		if ( empty( $payment_method_title ) ) {
 			$this->context->controller->errors[ $language_code . '_PAYLIKE_PAYMENT_METHOD_TITLE' ] = $this->l( 'Payment method title is required!' );
@@ -654,12 +654,12 @@ class PaylikePayment extends PaymentModule {
 			return false;
 		}
 
-		$products       = $params['cart']->getProducts();
+		$products = $params['cart']->getProducts();
 		$products_array = array();
 		$products_label = array();
-		$p              = 0;
+		$p = 0;
 		foreach ( $products as $product ) {
-			$products_array[]     = array(
+			$products_array[] = array(
 				$this->l( 'ID' )       => $product['id_product'],
 				$this->l( 'Name' )     => $product['name'],
 				$this->l( 'Quantity' ) => $product['cart_quantity']
@@ -669,8 +669,8 @@ class PaylikePayment extends PaymentModule {
 		}
 
 		$payment_method_title = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_TITLE' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_TITLE' ) : ( ! empty( Configuration::get( 'en_PAYLIKE_PAYMENT_METHOD_TITLE' ) ) ? Configuration::get( 'en_PAYLIKE_PAYMENT_METHOD_TITLE' ) : '' );
-		$payment_method_desc  = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_DESC' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_DESC' ) : ( ! empty( Configuration::get( 'en_PAYLIKE_PAYMENT_METHOD_DESC' ) ) ? Configuration::get( 'en_PAYLIKE_PAYMENT_METHOD_DESC' ) : '' );
-		$popup_title          = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_POPUP_TITLE' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_POPUP_TITLE' ) : ( ! empty( Configuration::get( 'en_PAYLIKE_POPUP_TITLE' ) ) ? Configuration::get( 'en_PAYLIKE_POPUP_TITLE' ) : '' );
+		$payment_method_desc = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_DESC' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_PAYMENT_METHOD_DESC' ) : ( ! empty( Configuration::get( 'en_PAYLIKE_PAYMENT_METHOD_DESC' ) ) ? Configuration::get( 'en_PAYLIKE_PAYMENT_METHOD_DESC' ) : '' );
+		$popup_title = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_POPUP_TITLE' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_POPUP_TITLE' ) : ( ! empty( Configuration::get( 'en_PAYLIKE_POPUP_TITLE' ) ) ? Configuration::get( 'en_PAYLIKE_POPUP_TITLE' ) : '' );
 
 		if ( Configuration::get( 'PAYLIKE_SHOW_POPUP_DESC' ) == 'yes' ) {
 			$popup_description = ( ! empty( Configuration::get( $language_code . '_PAYLIKE_POPUP_DESC' ) ) ) ? Configuration::get( $language_code . '_PAYLIKE_POPUP_DESC' ) : ( ! empty( Configuration::get( 'en_PAYLIKE_POPUP_DESC' ) ) ? Configuration::get( 'en_PAYLIKE_POPUP_DESC' ) : '' );
@@ -678,7 +678,7 @@ class PaylikePayment extends PaymentModule {
 			$popup_description = implode( ", & ", $products_label );
 		}
 
-		$cart  = $this->context->cart;
+		$cart = $this->context->cart;
 		$total = $cart->getOrderTotal( true, Cart::BOTH );
 		// echo "Total : ".$total;
 		//die();
@@ -693,22 +693,20 @@ class PaylikePayment extends PaymentModule {
 		} elseif ( $this->getPaylikeCurrencyMultiplier( $this->context->currency->iso_code ) == 10000 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) != 4 ) {
 			return false;
 		}
-		$currency            = new Currency( (int) $params['cart']->id_currency );
-		$decimals            = (int) $currency->decimals * _PS_PRICE_COMPUTE_PRECISION_;
-		$currency_multiplier = $this->getPaylikeCurrencyMultiplier( $currency->iso_code );
-		$amount              = ceil( Tools::ps_round( $params['cart']->getOrderTotal(), $decimals ) * $currency_multiplier ); //paid amounts with 100 to handle
-		$currency_code       = $currency->iso_code;
-		$customer            = new Customer( (int) $params['cart']->id_customer );
-		$name                = $customer->firstname . ' ' . $customer->lastname;
-		$email               = $customer->email;
-		$customer_address    = new Address( (int) ( $params['cart']->id_address_delivery ) );
-		$telephone           = ! empty( $customer_address->phone ) ? $customer_address->phone : ! empty( $customer_address->phone_mobile ) ? $customer_address->phone_mobile : '';
-		$address             = $customer_address->address1 . ', ' . $customer_address->address2 . ', ' . $customer_address->city . ', ' . $customer_address->country . ' - ' . $customer_address->postcode;
-		$ip                  = Tools::getRemoteAddr();
-		$locale              = $this->context->language->iso_code;
-		$platform_version    = _PS_VERSION_;
-		$ecommerce           = 'prestashop';
-		$module_version      = $this->version;
+		$currency = new Currency( (int) $params['cart']->id_currency );
+		$amount = $this->getPaylikeAmount( $params['cart']->getOrderTotal(), $currency->iso_code );
+		$currency_code = $currency->iso_code;
+		$customer = new Customer( (int) $params['cart']->id_customer );
+		$name = $customer->firstname . ' ' . $customer->lastname;
+		$email = $customer->email;
+		$customer_address = new Address( (int) ( $params['cart']->id_address_delivery ) );
+		$telephone = ! empty( $customer_address->phone ) ? $customer_address->phone : ! empty( $customer_address->phone_mobile ) ? $customer_address->phone_mobile : '';
+		$address = $customer_address->address1 . ', ' . $customer_address->address2 . ', ' . $customer_address->city . ', ' . $customer_address->country . ' - ' . $customer_address->postcode;
+		$ip = Tools::getRemoteAddr();
+		$locale = $this->context->language->iso_code;
+		$platform_version = _PS_VERSION_;
+		$ecommerce = 'prestashop';
+		$module_version = $this->version;
 
 		$redirect_url = $this->context->link->getModuleLink( 'paylikepayment', 'paymentreturn', array(), true, (int) $this->context->language->id );
 
@@ -776,9 +774,9 @@ class PaylikePayment extends PaymentModule {
 
 	public function updateTransactionID( $paylike_id_transaction, $order_id, $fields = array() ) {
 		if ( $paylike_id_transaction && $order_id && ! empty( $fields ) ) {
-			$fieldsStr  = '';
+			$fieldsStr = '';
 			$fieldCount = count( $fields );
-			$counter    = 0;
+			$counter = 0;
 
 			foreach ( $fields as $field => $value ) {
 				$counter ++;
@@ -788,7 +786,7 @@ class PaylikePayment extends PaymentModule {
 					$fieldsStr .= ', ';
 				}
 			}
-			$query = 'UPDATE ' . _DB_PREFIX_ . 'paylike_admin SET ' . pSQL( $fieldsStr ) . ' WHERE `paylike_tid`="' . pSQL( $paylike_id_transaction ) . '" AND `order_id`="' . pSQL( $order_id ) . '"';
+			$query = 'UPDATE ' . _DB_PREFIX_ . 'paylike_admin SET ' .  $fieldsStr . ' WHERE `paylike_tid`="' . pSQL( $paylike_id_transaction ) . '" AND `order_id`="' . pSQL( $order_id ) . '"';
 
 			return Db::getInstance()->Execute( $query );
 		} else {
@@ -810,6 +808,16 @@ class PaylikePayment extends PaymentModule {
 		} else {
 			return pow( 10, 2 );
 		}
+	}
+
+	public function getPaylikeAmount( $total, $currency_iso_code ) {
+		$multiplier = $this->getPaylikeCurrencyMultiplier( $currency_iso_code );
+		$amount = ceil( $total * $multiplier ); // round to make sure we are always minor units.
+		if ( function_exists( 'bcmul' ) ) {
+			$amount = ceil( bcmul( $total, $multiplier ) );
+		}
+
+		return $amount;
 	}
 
 	public function getPaylikeCurrency( $currency_iso_code ) {
@@ -1435,11 +1443,11 @@ class PaylikePayment extends PaymentModule {
 					'numeric'  => '446',
 					'exponent' => 2,
 				),
-			'MRO' =>
+			'MRU' =>
 				array(
-					'code'     => 'MRO',
+					'code'     => 'MRU',
 					'currency' => 'Mauritanian ouguiya',
-					'numeric'  => '478',
+					'numeric'  => '929',
 					'exponent' => 2,
 				),
 			'MUR' =>
@@ -1691,11 +1699,11 @@ class PaylikePayment extends PaymentModule {
 					'numeric'  => '968',
 					'exponent' => 2,
 				),
-			'STD' =>
+			'STN' =>
 				array(
-					'code'     => 'STD',
+					'code'     => 'STN',
 					'currency' => 'São Tomé and Príncipe dobra',
-					'numeric'  => '678',
+					'numeric'  => '930',
 					'exponent' => 2,
 				),
 			'SYP' =>
@@ -1811,11 +1819,11 @@ class PaylikePayment extends PaymentModule {
 					'numeric'  => '860',
 					'exponent' => 2,
 				),
-			'VEF' =>
+			'VES' =>
 				array(
 					'code'     => 'VEF',
 					'currency' => 'Venezuelan bolívar',
-					'numeric'  => '937',
+					'numeric'  => '928',
 					'exponent' => 2,
 				),
 			'VND' =>
@@ -1905,9 +1913,9 @@ class PaylikePayment extends PaymentModule {
 
 	public function hookDisplayAdminOrder( $params ) {
 		$id_order = $params['id_order'];
-		$order    = new Order( (int) $id_order );
+		$order = new Order( (int) $id_order );
 		if ( $order->module == $this->name ) {
-			$order_token        = Tools::getAdminToken( 'AdminOrders' . (int) Tab::getIdFromClassName( 'AdminOrders' ) . (int) $this->context->employee->id );
+			$order_token = Tools::getAdminToken( 'AdminOrders' . (int) Tab::getIdFromClassName( 'AdminOrders' ) . (int) $this->context->employee->id );
 			$payliketransaction = Db::getInstance()->getRow( 'SELECT * FROM ' . _DB_PREFIX_ . 'paylike_admin WHERE order_id = ' . (int) $id_order );
 			$this->context->smarty->assign( array(
 				'ps_version'         => _PS_VERSION_,
@@ -1922,14 +1930,13 @@ class PaylikePayment extends PaymentModule {
 
 	public function hookBackOfficeHeader() {
 		if ( Tools::getIsset( 'vieworder' ) && Tools::getIsset( 'id_order' ) && Tools::getIsset( 'paylike_action' ) ) {
-			$paylike_action     = Tools::getValue( 'paylike_action' );
-			$id_order           = (int) Tools::getValue( 'id_order' );
-			$order              = new Order( (int) $id_order );
+			$paylike_action = Tools::getValue( 'paylike_action' );
+			$id_order = (int) Tools::getValue( 'id_order' );
+			$order = new Order( (int) $id_order );
 			$payliketransaction = Db::getInstance()->getRow( 'SELECT * FROM ' . _DB_PREFIX_ . 'paylike_admin WHERE order_id = ' . (int) $id_order );
-			$transactionid      = $payliketransaction['paylike_tid'];
+			$transactionid = $payliketransaction['paylike_tid'];
 			Paylike\Client::setKey( Configuration::get( 'PAYLIKE_SECRET_KEY' ) );
 			$fetch = Paylike\Transaction::fetch( $transactionid );
-
 			switch ( $paylike_action ) {
 				case "capture":
 					if ( $payliketransaction['captured'] == 'YES' ) {
@@ -1938,12 +1945,12 @@ class PaylikePayment extends PaymentModule {
 							'message' => Tools::displayError( 'Transaction was already captured.You can only capture once.' ),
 						);
 					} else if ( isset( $payliketransaction ) ) {
-						$amount              = ( ! empty( $fetch['transaction']['pendingAmount'] ) ) ? (int) $fetch['transaction']['pendingAmount'] : 0;
-						$currency            = new Currency( (int) $order->id_currency );
+						$amount = ( ! empty( $fetch['transaction']['pendingAmount'] ) ) ? (int) $fetch['transaction']['pendingAmount'] : 0;
+						$currency = new Currency( (int) $order->id_currency );
 						$currency_multiplier = $this->getPaylikeCurrencyMultiplier( $currency->iso_code );
 						if ( $amount ) {
 							//Capture transaction
-							$data    = array(
+							$data = array(
 								'currency' => $currency->iso_code,
 								'amount'   => $amount,
 							);
@@ -1975,14 +1982,14 @@ class PaylikePayment extends PaymentModule {
                                     Order time: ' . $capture['transaction']['created'] . '
                                     Currency code: ' . $capture['transaction']['currency'];
 
-									$msg     = new Message();
+									$msg = new Message();
 									$message = strip_tags( $message, '<br>' );
 									if ( Validate::isCleanHtml( $message ) ) {
-										$msg->message     = $message;
-										$msg->id_cart     = (int) $order->id_cart;
+										$msg->message = $message;
+										$msg->id_cart = (int) $order->id_cart;
 										$msg->id_customer = (int) $order->id_customer;
-										$msg->id_order    = (int) $order->id;
-										$msg->private     = 1;
+										$msg->id_order = (int) $order->id;
+										$msg->private = 1;
 										$msg->add();
 									}
 
@@ -2028,7 +2035,7 @@ class PaylikePayment extends PaymentModule {
 						);
 					} else if ( isset( $payliketransaction ) ) {
 						$paylike_amount_to_refund = Tools::getValue( 'paylike_amount_to_refund' );
-						$paylike_refund_reason    = Tools::getValue( 'paylike_refund_reason' );
+						$paylike_refund_reason = Tools::getValue( 'paylike_refund_reason' );
 
 						if ( ! Validate::isPrice( $paylike_amount_to_refund ) ) {
 							$response = array(
@@ -2036,11 +2043,11 @@ class PaylikePayment extends PaymentModule {
 								'message' => Tools::displayError( 'The amount is not valid for refunding. Please double check the format.' ),
 							);
 						} else {
-							$currency            = new Currency( (int) $order->id_currency );
+							$currency = new Currency( (int) $order->id_currency );
 							$currency_multiplier = $this->getPaylikeCurrencyMultiplier( $currency->iso_code );
 							//Refund transaction
-							$amount = ceil( Tools::ps_round( $paylike_amount_to_refund, 2 ) * $currency_multiplier );
-							$data   = array(
+							$amount = $this->getPaylikeAmount( $paylike_amount_to_refund, $currency->iso_code );
+							$data = array(
 								'descriptor' => $paylike_refund_reason,
 								'amount'     => $amount,
 							);
@@ -2070,14 +2077,14 @@ class PaylikePayment extends PaymentModule {
                                         Order time: ' . $refund['transaction']['created'] . '
                                         Currency code: ' . $refund['transaction']['currency'];
 
-									$msg     = new Message();
+									$msg = new Message();
 									$message = strip_tags( $message, '<br>' );
 									if ( Validate::isCleanHtml( $message ) ) {
-										$msg->message     = $message;
-										$msg->id_cart     = (int) $order->id_cart;
+										$msg->message = $message;
+										$msg->id_cart = (int) $order->id_cart;
 										$msg->id_customer = (int) $order->id_customer;
-										$msg->id_order    = (int) $order->id;
-										$msg->private     = 1;
+										$msg->id_order = (int) $order->id;
+										$msg->private = 1;
 										$msg->add();
 									}
 
@@ -2119,10 +2126,10 @@ class PaylikePayment extends PaymentModule {
 					} else if ( isset( $payliketransaction ) ) {
 						//Void transaction
 						$amount = (int) $fetch['transaction']['amount'] - $fetch['transaction']['refundedAmount'];
-						$data   = array(
+						$data = array(
 							'amount' => $amount,
 						);
-						$void   = Paylike\Transaction::void( $transactionid, $data );
+						$void = Paylike\Transaction::void( $transactionid, $data );
 
 						if ( is_array( $void ) && ! empty( $void['error'] ) && $void['error'] == 1 ) {
 							PrestaShopLogger::addLog( $void['message'] );
@@ -2135,7 +2142,7 @@ class PaylikePayment extends PaymentModule {
 								//Update order status
 								$order->setCurrentState( (int) Configuration::get( 'PS_OS_CANCEL' ), $this->context->employee->id );
 
-								$currency            = new Currency( (int) $order->id_currency );
+								$currency = new Currency( (int) $order->id_currency );
 								$currency_multiplier = $this->getPaylikeCurrencyMultiplier( $currency->iso_code );
 								//Set message
 								$message = 'Trx ID: ' . $transactionid . '
@@ -2144,14 +2151,14 @@ class PaylikePayment extends PaymentModule {
                                         Order time: ' . $void['transaction']['created'] . '
                                         Currency code: ' . $void['transaction']['currency'];
 
-								$msg     = new Message();
+								$msg = new Message();
 								$message = strip_tags( $message, '<br>' );
 								if ( Validate::isCleanHtml( $message ) ) {
-									$msg->message     = $message;
-									$msg->id_cart     = (int) $order->id_cart;
+									$msg->message = $message;
+									$msg->id_cart = (int) $order->id_cart;
 									$msg->id_customer = (int) $order->id_customer;
-									$msg->id_order    = (int) $order->id;
-									$msg->private     = 1;
+									$msg->id_order = (int) $order->id;
+									$msg->private = 1;
 									$msg->add();
 								}
 
@@ -2199,7 +2206,7 @@ class PaylikePayment extends PaymentModule {
 			}
 
 			$logo_slug = Tools::strtolower( str_replace( ' ', '-', $logo_name ) );
-			$sql       = new DbQuery();
+			$sql = new DbQuery();
 			$sql->select( '*' );
 			$sql->from( 'paylike_logos', 'PL' );
 			$sql->where( 'PL.slug = "' . pSQL( $logo_slug ) . '"' );
@@ -2213,12 +2220,12 @@ class PaylikePayment extends PaymentModule {
 			}
 
 			if ( ! empty( $_FILES['logo_file']['name'] ) ) {
-				$target_dir    = _PS_MODULE_DIR_ . $this->name . '/views/img/';
-				$name          = basename( $_FILES['logo_file']["name"] );
-				$path_parts    = pathinfo( $name );
-				$extension     = $path_parts['extension'];
-				$file_name     = $logo_slug . '.' . $extension;
-				$target_file   = $target_dir . basename( $file_name );
+				$target_dir = _PS_MODULE_DIR_ . $this->name . '/views/img/';
+				$name = basename( $_FILES['logo_file']["name"] );
+				$path_parts = pathinfo( $name );
+				$extension = $path_parts['extension'];
+				$file_name = $logo_slug . '.' . $extension;
+				$target_file = $target_dir . basename( $file_name );
 				$imageFileType = pathinfo( $target_file, PATHINFO_EXTENSION );
 
 				/*$check = getimagesize($_FILES['logo_file']["tmp_name"]);
@@ -2241,7 +2248,7 @@ class PaylikePayment extends PaymentModule {
 
 				// Allow certain file formats
 				if ( $imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-				     && $imageFileType != "gif" && $imageFileType != "svg" ) {
+					&& $imageFileType != "gif" && $imageFileType != "svg" ) {
 					$response = array(
 						'status'  => 0,
 						'message' => 'Sorry, only JPG, JPEG, PNG, GIF & SVG files are allowed.'
@@ -2286,7 +2293,7 @@ class PaylikePayment extends PaymentModule {
 			$language_code = ( ! empty( Tools::getvalue( 'lang_code' ) ) ) ? Tools::getvalue( 'lang_code' ) : Configuration::get( 'PAYLIKE_LANGUAGE_CODE' );
 			Configuration::updateValue( 'PAYLIKE_LANGUAGE_CODE', $language_code );
 			$token = Tools::getAdminToken( 'AdminModules' . (int) Tab::getIdFromClassName( 'AdminModules' ) . (int) $this->context->employee->id );
-			$link  = $this->context->link->getAdminLink( 'AdminModules' ) . '&token=' . $token . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
+			$link = $this->context->link->getAdminLink( 'AdminModules' ) . '&token=' . $token . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
 			Tools::redirectAdmin( $link );
 		}
 
