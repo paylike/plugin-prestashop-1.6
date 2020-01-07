@@ -2,7 +2,7 @@
 
 **END OF MAINTENANCE**
 
-** Prestashop 1.6.x is no longer receiving updates so for improved security and maintenance we encourage you to use 1.7.x. You can find the 1.7 extension here: https://github.com/paylike/plugin-prestashop-1.7 **
+**Prestashop 1.6.x is no longer receiving updates so for improved security and maintenance we encourage you to use 1.7.x. You can find the 1.7 extension here: https://github.com/paylike/plugin-prestashop-1.7**
 
 This plugin is *not* developed or maintained by Paylike but kindly made
 available by the community.
