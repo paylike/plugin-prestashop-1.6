@@ -18,6 +18,11 @@ You can also find information about the plugin here: https://paylike.io/plugins/
 
 ## Installation
 
+Once you have installed Prestashop, follow these simple steps:
+
+1. Signup at [paylike.io](https://paylike.io) (it’s free)
+1. Create a live account
+1. Create an app key for your CS-Cart website
 1. Zip the paylikepayment folder.
 2. Log in as administrator and upload the zip you just created under modules/add a new module (plus icon in the top right corner).
 3. You will be redirected to a list that contains the Paylike plugin. Click the green button that says install, and then in the confirmation popup, click proceed with the installation.  
