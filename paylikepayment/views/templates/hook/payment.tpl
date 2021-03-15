@@ -18,7 +18,7 @@
             height: 27px;
         }
     </style>
-    <script type="text/javascript" src="https://sdk.paylike.io/3.js"></script>
+    <script type="text/javascript" src="https://sdk.paylike.io/6.js"></script>
     <script>
         var PAYLIKE_PUBLIC_KEY = "{$PAYLIKE_PUBLIC_KEY|escape:'htmlall':'UTF-8'}";
         var paylike = Paylike(PAYLIKE_PUBLIC_KEY);
