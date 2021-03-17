@@ -18,31 +18,38 @@
             height: 27px;
         }
     </style>
-    <script type="text/javascript" src="https://sdk.paylike.io/6.js"></script>
     <script>
-        var PAYLIKE_PUBLIC_KEY = "{$PAYLIKE_PUBLIC_KEY|escape:'htmlall':'UTF-8'}";
-        var paylike = Paylike(PAYLIKE_PUBLIC_KEY);
-        var shop_name = "{$shop_name|escape:'htmlall':'UTF-8'}";
-        var PS_SSL_ENABLED = "{$PS_SSL_ENABLED|escape:'htmlall':'UTF-8'}";
-        var host = "{$http_host|escape:'htmlall':'UTF-8'}";
-        var BASE_URI = "{$base_uri|escape:'htmlall':'UTF-8'}";
-        var popup_title = "{$popup_title nofilter}";
-        var popup_description = "{$popup_description nofilter}"; //html variable can not be escaped;
-        var currency_code = "{$currency_code|escape:'htmlall':'UTF-8'}";
-        var amount = "{$amount|escape:'htmlall':'UTF-8'}";
-        var id_cart = {$id_cart}; //html variable can not be escaped;
-        var products = {$products}; //html variable can not be escaped;
-        var name = "{$name|escape:'htmlall':'UTF-8'}";
-        var email = "{$email|escape:'htmlall':'UTF-8'}";
-        var telephone = "{$telephone|escape:'htmlall':'UTF-8'}";
-        var address = "{$address|escape:'htmlall':'UTF-8'}";
-        var ip = "{$ip|escape:'htmlall':'UTF-8'}";
-        var locale = "{$locale|escape:'htmlall':'UTF-8'}";
-        var platform_version = "{$platform_version|escape:'htmlall':'UTF-8'}";
-        var ecommerce = "{$ecommerce|escape:'htmlall':'UTF-8'}";
-        var module_version = "{$module_version|escape:'htmlall':'UTF-8'}";
-        var url_controller = "{$redirect_url|escape:'htmlall':'UTF-8'}";
-        var qry_str = "{$qry_str}"; //html variable can not be escaped;
+        if (typeof window.initialized == 'undefined') {
+            var PAYLIKE_PUBLIC_KEY = "{$PAYLIKE_PUBLIC_KEY|escape:'htmlall':'UTF-8'}";
+            var paylike = null;
+            $.getScript('https://sdk.paylike.io/6.js',function(){
+                paylike = Paylike(PAYLIKE_PUBLIC_KEY);
+            });
+            var shop_name = "{$shop_name|escape:'htmlall':'UTF-8'}";
+            var PS_SSL_ENABLED = "{$PS_SSL_ENABLED|escape:'htmlall':'UTF-8'}";
+            var host = "{$http_host|escape:'htmlall':'UTF-8'}";
+            var BASE_URI = "{$base_uri|escape:'htmlall':'UTF-8'}";
+            var popup_title = "{$popup_title nofilter}";
+            var popup_description = "{$popup_description nofilter}"; //html variable can not be escaped;
+            var currency_code = "{$currency_code|escape:'htmlall':'UTF-8'}";
+            var amount = "{$amount|escape:'htmlall':'UTF-8'}";
+            var id_cart = {$id_cart}; //html variable can not be escaped;
+            var products = {$paylike_products}; //html variable can not be escaped;
+            var name = "{$name|escape:'htmlall':'UTF-8'}";
+            var email = "{$email|escape:'htmlall':'UTF-8'}";
+            var telephone = "{$telephone|escape:'htmlall':'UTF-8'}";
+            var address = "{$address|escape:'htmlall':'UTF-8'}";
+            var ip = "{$ip|escape:'htmlall':'UTF-8'}";
+            var locale = "{$locale|escape:'htmlall':'UTF-8'}";
+            var platform_version = "{$platform_version|escape:'htmlall':'UTF-8'}";
+            var ecommerce = "{$ecommerce|escape:'htmlall':'UTF-8'}";
+            var module_version = "{$module_version|escape:'htmlall':'UTF-8'}";
+            var url_controller = "{$redirect_url|escape:'htmlall':'UTF-8'}";
+            var qry_str = "{$qry_str}"; //html variable can not be escaped;
+
+            /*Initialized Flag*/
+            var initialized = true;
+        }
 
         function pay() {
             paylike.popup({
