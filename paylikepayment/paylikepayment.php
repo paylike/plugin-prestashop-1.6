@@ -624,7 +624,7 @@ class PaylikePayment extends PaymentModule {
 
 	public function hookHeader() {
 		/*if(Configuration::get('PAYLIKE_STATUS') == 'enabled' && $this->context->controller->php_self == 'order') {
-            $this->context->controller->addJs('https://sdk.paylike.io/3.js');
+            $this->context->controller->addJs('https://sdk.paylike.io/6.js');
         }*/
 	}
 
