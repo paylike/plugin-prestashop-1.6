@@ -40,4 +40,10 @@ Under the extension settings, you can:
  * Set payment mode (test/live)
  * Change the capture type (Instant/Manual via Paylike Tool)
  
-  
+## Limitations
+ 
+ * In order to use the Paylike module you'll need to set "Number of decimals" option to match the paylike supported decimals. Since this is a global setting that affects all currencies you cannot use at the same time currencies with different decimals. 
+ Change this option from: Admin -> Preferences -> General
+
+ * Paylike doesn't provide support for customizable decimals display. In order to display the correct values durring the payment process you'll need to set "Decimals" option to value "True" for the "Edit" panel of the currencies used in your store.
+ Change this option from: Admin -> Localization -> Currencies

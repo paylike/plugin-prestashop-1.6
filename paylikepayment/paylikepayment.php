@@ -269,6 +269,7 @@ class PaylikePayment extends PaymentModule {
 	public function renderCurrencyWarning() {
 		$currencies = Currency::getCurrencies();
 		$warning_currencies = array();
+		$warning_decimals = array();
 		foreach ( $currencies as $currency ) {
 			if ( $this->getPaylikeCurrencyMultiplier( $currency['iso_code'] ) == 1 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) != 0 ) {
 				$warning_currencies[0][] = $currency['iso_code'];
@@ -280,14 +281,20 @@ class PaylikePayment extends PaymentModule {
 				$warning_currencies[3][] = $currency['iso_code'];
 			} elseif ( $this->getPaylikeCurrencyMultiplier( $currency['iso_code'] ) == 10000 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) != 4 ) {
 				$warning_currencies[4][] = $currency['iso_code'];
+			} 
+
+			if ( !$currency['decimals'] ) {
+				$warning_decimals[] = $currency['iso_code'];
 			}
 		}
-		if ( count( $warning_currencies ) ) {
+
+		if ( count( $warning_currencies ) || count( $warning_decimals ) ) {
 			$this->context->smarty->assign(
 				array(
 					'warning_currencies_decimal' => $warning_currencies,
-					'PS_PRICE_DISPLAY_PRECISION' => Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ),
-					'preferences_url'            => $this->context->link->getAdminLink( 'AdminPreferences' )
+					'warning_currencies_display_decimals' => $warning_decimals,
+					'preferences_url'            => $this->context->link->getAdminLink( 'AdminPreferences' ),
+					'currencies_url'             => $this->context->link->getAdminLink( 'AdminCurrencies' )
 				)
 			);
 
