@@ -56,6 +56,7 @@
                     currency: currency_code,
                     amount: amount,
                     title: popup_title,
+                    locale: locale,
                     description: popup_description,
                     custom: {
                         orderId: id_cart,
