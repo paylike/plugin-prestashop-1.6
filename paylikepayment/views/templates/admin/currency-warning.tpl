@@ -3,13 +3,13 @@
  * @author    DerikonDevelopment <ionut@derikon.com>
  * @copyright Copyright (c) permanent, DerikonDevelopment
  * @license   Addons PrestaShop license limitation
- * @version   1.0.7
+ * @version   1.0.8
  * @link      http://www.derikon.com/
  *
  *}
 {if $warning_currencies_decimal|@count}
     <p class="alert alert-danger">
-        {l s='Note: Due to prestashop standards we need to abide to, currencies decimals must match the paylike supported decimals. In order to use the Paylike module for the following currencies, you\'ll need to set "Number of decimals" option to the number shown bellow from tab. Since this is a global setting that affects all currencies you cannot use at the same time currencies with different decimals.' mod='paylikepayment'}
+        {l s='Note: Due to prestashop standards we need to abide to, currencies decimals number must be less or equal to paylike supported number of decimals. In order to use the Paylike module for the following currencies, you\'ll need to set "Number of decimals" option to the number or less then the value shown bellow from tab. Since this is a global setting that affects all currencies you cannot use at the same time currencies with different decimals.' mod='paylikepayment'}
         <br/>
         <a href="{$preferences_url}">{l s='Preferences -> General' mod='paylikepayment'}</a>
         <br>
