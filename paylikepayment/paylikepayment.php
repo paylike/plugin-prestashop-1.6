@@ -4,7 +4,6 @@
  * @author    DerikonDevelopment <ionut@derikon.com>
  * @copyright Copyright (c) permanent, DerikonDevelopment
  * @license   Addons PrestaShop license limitation
- * @version   1.0.8
  * @link      http://www.derikon.com/
  *
  */
@@ -26,7 +25,7 @@ class PaylikePayment extends PaymentModule {
 	public function __construct() {
 		$this->name = 'paylikepayment';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.0.8';
+		$this->version = '1.2.0';
 		$this->author = 'DerikonDevelopment';
 		$this->bootstrap = true;
 		$this->module_key = '1d083bab290f652fb6fb7ae35f9f0942';
@@ -722,6 +721,7 @@ class PaylikePayment extends PaymentModule {
 		}
 
 		$this->context->smarty->assign( array(
+			'active_status'             	 => Tools::getvalue( 'PAYLIKE_TRANSACTION_MODE' ),
 			'PAYLIKE_PUBLIC_KEY'             => $PAYLIKE_PUBLIC_KEY,
 			'PS_SSL_ENABLED'                 => ( Configuration::get( 'PS_SSL_ENABLED' ) ? 'https' : 'http' ),
 			'http_host'                      => Tools::getHttpHost(),
@@ -734,6 +734,7 @@ class PaylikePayment extends PaymentModule {
 			'popup_description'              => $popup_description,
 			'currency_code'                  => $currency_code,
 			'amount'                         => $amount,
+			'exponent'                       => $this->getPaylikeCurrency( $currency_code )['exponent'],
 			'id_cart'                        => Tools::jsonEncode( $params['cart']->id ),
 			'paylike_products'               => Tools::jsonEncode( $products_array ),
 			'name'                           => $name,

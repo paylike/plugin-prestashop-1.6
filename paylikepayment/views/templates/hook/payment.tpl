@@ -20,14 +20,19 @@
     </style>
     <script>
         if (typeof window.initialized == 'undefined') {
-            var PAYLIKE_PUBLIC_KEY = "{$PAYLIKE_PUBLIC_KEY|escape:'htmlall':'UTF-8'}";
-            $.getScript('https://sdk.paylike.io/6.js',function(){
-                window.paylike = Paylike(PAYLIKE_PUBLIC_KEY);
+            var PAYLIKE_PUBLIC_KEY = {
+                key: "{$PAYLIKE_PUBLIC_KEY|escape:'htmlall':'UTF-8'}"
+            };
+
+            $.getScript('https://sdk.paylike.io/10.js',function(){
+                paylike = Paylike(PAYLIKE_PUBLIC_KEY);
             });
+
             /*Initialized Flag*/
             window.initialized = true;
         }
-        
+
+        var active_status = "{$active_status}";
         var shop_name = "{$shop_name|escape:'htmlall':'UTF-8'}";
         var PS_SSL_ENABLED = "{$PS_SSL_ENABLED|escape:'htmlall':'UTF-8'}";
         var host = "{$http_host|escape:'htmlall':'UTF-8'}";
@@ -35,7 +40,8 @@
         var popup_title = "{$popup_title nofilter}";
         var popup_description = "{$popup_description nofilter}"; //html variable can not be escaped;
         var currency_code = "{$currency_code|escape:'htmlall':'UTF-8'}";
-        var amount = "{$amount|escape:'htmlall':'UTF-8'}";
+        var amount = {$amount|escape:'htmlall':'UTF-8'};
+        var exponent = {$exponent};
         var id_cart = {$id_cart}; //html variable can not be escaped;
         var products = {$paylike_products}; //html variable can not be escaped;
         var name = "{$name|escape:'htmlall':'UTF-8'}";
@@ -51,9 +57,13 @@
         var qry_str = "{$qry_str}"; //html variable can not be escaped;
 
         function pay() {
-            paylike.popup({
-                    currency: currency_code,
-                    amount: amount,
+            paylike.pay({
+                    test: ('live' === active_status) ? (false) : (true),
+                    amount: {
+                        currency: currency_code,
+                        exponent: exponent,
+                        value: amount
+                    },
                     title: popup_title,
                     locale: locale,
                     description: popup_description,
