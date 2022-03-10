@@ -13,7 +13,7 @@ You can also find information about the plugin here: https://paylike.io/plugins/
 
 ## Supported Prestashop versions
 
-[![Last succesfull [![Last succesfull test](https://log.derikon.ro/api/v1/log/read?tag=prestashop16&view=svg&label=PrestaShop&key=ecommerce&background=A31208)](https://log.derikon.ro/api/v1/log/read?tag=prestashop16&view=html)
+[![Last succesfull test](https://log.derikon.ro/api/v1/log/read?tag=prestashop16&view=svg&label=PrestaShop&key=ecommerce&background=A31208)](https://log.derikon.ro/api/v1/log/read?tag=prestashop16&view=html)
 
 * The plugin has been tested with most versions of Prestashop at every iteration. We recommend using the latest version of Prestashop, but if that is not possible for some reason, test the plugin with your Prestashop version and it would probably function properly.
 
