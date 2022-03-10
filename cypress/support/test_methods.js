@@ -15,9 +15,10 @@ export var TestMethods = {
     ShopName: 'prestashop16',
     PaylikeName: 'paylike',
     OrderStatusForCapture: '',
-    PaymentMethodAdminUrl: '/index.php?controller=AdminModules&configure=paylikepayment',
-    ModulesAdminUrl: '/index.php?controller=AdminModules',
-    OrdersPageAdminUrl: '/index.php/sell/orders',
+    /** We need to have "&module_name=paylikepayment" at the end because permission error accessing the link. */
+    PaymentMethodAdminUrl: '/index.php?controller=AdminModules&configure=paylikepayment&module_name=paylikepayment',
+    ModulesAdminUrl: '/index.php?controller=AdminModules&filterCategory=payments_gateways',
+    OrdersPageAdminUrl: '/index.php?controller=AdminOrders',
 
     /**
      * Login to admin backend account
@@ -30,13 +31,8 @@ export var TestMethods = {
      * Login to client|user frontend account
      */
     loginIntoClientAccount() {
-        /**
-         * Note
-         * "/index.php?controller=authentication&back=my-account" may be an old uri
-         * On Prestashop newer versions it redirect to "/login?&back=my-account"
-         */
-        cy.goToPage(this.StoreUrl + '/index.php?controller=authentication&back=my-account');
-        cy.loginIntoAccount('input[id=field-email]', 'input[name=password]', 'client');
+        cy.goToPage(this.StoreUrl + '/login?&back=my-account');
+        cy.loginIntoAccount('input[id=email]', 'input[name=passwd]', 'client');
     },
 
     /**
@@ -74,7 +70,7 @@ export var TestMethods = {
 
         /** Process last order from admin panel. */
         it(`process (${paylikeAction}) an order from admin panel`, () => {
-            this.processOrderFromAdmin(paylikeAction, partialAmount);
+            this.processOrderFromAdmin(paylikeAction,  currency, partialAmount);
         });
     },
 
@@ -91,51 +87,42 @@ export var TestMethods = {
 
         cy.wait(300);
 
-        /**
-         * Go to random product page.
-         */
-        var randomInt = PaylikeTestHelper.getRandomInt(/*max*/ 5);
-        var productId = randomInt + 1; // product id > 0
-        cy.goToPage(this.StoreUrl + `/index.php?id_product=${productId}&controller=product`);
+        /** Select random product. */
+        var randomInt = PaylikeTestHelper.getRandomInt(/*max*/ 6);
+        cy.get('.replace-2x.img-responsive').eq(randomInt).click();
 
         /** Add to cart. */
-        cy.get('button.add-to-cart').click();
+        cy.get('#add_to_cart').click();
 
         /** Wait to add to cart. */
-        cy.wait(2000);
+        cy.wait(1000);
 
         /** Go to checkout. */
-        cy.goToPage(this.StoreUrl + '/index.php?controller=order');
+        cy.goToPage(this.StoreUrl + '/quick-order');
 
-        /** Continue. */
-        cy.get('button[name="confirm-addresses"]').click();
-        cy.wait(200);
-        cy.get('button[name="confirmDeliveryOption"]').click();
-        cy.wait(200);
+        /** Agree Terms & Conditions. */
+        cy.get('#cgv').click();
 
-        /** Choose Paylike. */
-        cy.get(`input[data-module-name*=${this.PaylikeName}]`).click();
+        /** Wait amount to be available. */
+        cy.wait(1500);
 
         /** Check amount. */
-        cy.get('div.cart-summary-line.cart-total .value').then($grandTotal => {
+        cy.get('#total_price').then($grandTotal => {
             var expectedAmount = PaylikeTestHelper.filterAndGetAmountInMinor($grandTotal, currency);
             cy.window().then(win => {
-                expect(expectedAmount).to.eq(Number(win.PayLikePayment.amount));
+                expect(expectedAmount).to.eq(Number(win.amount));
             });
         });
 
-        /** Agree Terms & Conditions. */
-        cy.get('input[id="conditions_to_approve[terms-and-conditions]"]').click();
-
-        /** Show paylike popup. */
-        cy.get('#pay-by-paylike').click();
+        /** Show Paylike popup. */
+        cy.get('.paylike-payment').click();
 
         /**
          * Fill in Paylike popup.
          */
          PaylikeTestHelper.fillAndSubmitPaylikePopup();
 
-        cy.get('h3.h1.card-title', {timeout: 10000}).should('contain', 'Your order is confirmed');
+        cy.get('#center_column', {timeout: 10000}).should('contain', 'Congratulations');
     },
 
     /**
@@ -143,20 +130,20 @@ export var TestMethods = {
      * @param {String} paylikeAction
      * @param {Boolean} partialAmount
      */
-    processOrderFromAdmin(paylikeAction, partialAmount = false) {
+    processOrderFromAdmin(paylikeAction,  currency = '', partialAmount = false) {
         /** Go to admin orders page. */
-        this.goToPageAndIgnoreWarning(this.OrdersPageAdminUrl);
+        cy.goToPage(this.OrdersPageAdminUrl);
 
         PaylikeTestHelper.setPositionRelativeOn('#header_infos');
-        PaylikeTestHelper.setPositionRelativeOn('.header-toolbar');
+        PaylikeTestHelper.setPositionRelativeOn('.page-head');
 
         /** Click on first (latest in time) order from orders table. */
-        cy.get('table tbody tr').first().click();
+        cy.get('table.order tbody tr').first().click();
 
         /**
          * Take specific action on order
          */
-        this.paylikeActionOnOrderAmount(paylikeAction, partialAmount);
+        this.paylikeActionOnOrderAmount(paylikeAction,  currency, partialAmount);
     },
 
     /**
@@ -164,53 +151,40 @@ export var TestMethods = {
      * @param {String} paylikeAction
      * @param {Boolean} partialAmount
      */
-     paylikeActionOnOrderAmount(paylikeAction, partialAmount = false) {
-        switch (paylikeAction) {
-            case 'capture':
-                cy.get('#update_order_status_new_order_status_id').select(this.OrderStatusForCapture);
-                cy.get('.btn-primary.update-status').click();
-            break;
+     paylikeActionOnOrderAmount(paylikeAction,  currency = '', partialAmount = false) {
+         /** Select paylike action. */
+        cy.get('#paylike_action').select(paylikeAction);
 
-            case 'refund':
-                cy.get('.btn-action.partial-refund-display').click();
-                /** Verify if refund with Paylike is checked. */
-                cy.get('input#doRefundPaylike').should('have.attr', 'checked');
-
-                /** If we got multiple products, be sure to select only one. */
-                cy.get('input.refund-quantity').first().clear().type(1);
-                cy.get('input[id*="cancel_product_amount"]').click();
-
+        if ('refund' === paylikeAction) {
+            cy.get('#total_order  .amount').then(($totalAmount) => {
+                var majorAmount = PaylikeTestHelper.filterAndGetAmountInMajorUnit($totalAmount, currency);
+                /**
+                 * Subtract 2 from total amount.
+                 * Assume that we have products with total amount > 2 units
+                 */
                 if (partialAmount) {
-                    /**
-                     * Put 8 major units to be refunded.
-                     * Premise: any product must have price >= 8.
-                     */
-                    cy.get('input[id*="cancel_product_amount"]').clear().type(8);
+                    majorAmount -= 2
                 }
-                /** Save. */
-                cy.get('#cancel_product_save').click();
-            break;
-
-            case 'void':
-                cy.get('#update_order_status_new_order_status_id').select('Canceled');
-                cy.get('.btn-primary.update-status').click();
-            break;
+                cy.get('input[name=paylike_amount_to_refund]').clear().type(`${majorAmount}`);
+                cy.get('input[name=paylike_refund_reason]').clear().type('automatic refund');
+            });
         }
 
-        /** Check if success message. */
-        cy.get('.alert.alert-success').should('be.visible');
+        /** Submit and check errors not exists. */
+        cy.get('#submit_paylike_action').click();
+        cy.wait(1000);
+        cy.get('#alert.alert-info').should('not.exist');
+        cy.get('#alert.alert-warning').should('not.exist');
+        cy.get('#alert.alert-danger').should('not.exist');
+
     },
 
     /**
      * Change shop currency in frontend
      */
     changeShopCurrency(currency) {
-        cy.get('button[aria-label="Currency dropdown"]').click();
-        cy.get('ul[aria-labelledby="currency-selector-label"] li a').each($listLink => {
-            if ($listLink.text().includes(currency)) {
-                cy.get($listLink).click();
-            }
-        });
+        cy.get('#setCurrency div.current').click();
+        cy.get('ul[id="first-currencies"] li a').contains(currency).click();
     },
 
     /**
@@ -229,15 +203,16 @@ export var TestMethods = {
     logVersions() {
         /** Get framework version. */
         cy.get('#shop_version').then($frameworkVersion => {
-            var frameworkVersion = ($frameworkVersion.text()).replace(/.*[^0-9.]/g, '');
+            var frameworkVersion = ($frameworkVersion.text()).replace(/[^0-9.]/g, '');
             cy.wrap(frameworkVersion).as('frameworkVersion');
         });
 
         this.goToPageAndIgnoreWarning(this.ModulesAdminUrl);
 
         /** Get Paylike version. */
-        cy.get(`div[data-tech-name*=${this.PaylikeName}]`).invoke('attr', 'data-version').then($pluginVersion => {
-            cy.wrap($pluginVersion).as('pluginVersion');
+        cy.get('#anchorPaylikepayment .module_name').invoke('text').then($pluginVersion => {
+            var pluginVersion = $pluginVersion.replace(/[^0-9.]/g, '');
+            cy.wrap(pluginVersion).as('pluginVersion');
         });
 
         /** Get global variables and make log data request to remote url. */
