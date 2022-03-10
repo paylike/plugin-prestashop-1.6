@@ -41,7 +41,7 @@ describe('paylike plugin quick test', () => {
 
     /** Refund last created order (previously captured). */
     it('Process last order captured from admin panel to be refunded', () => {
-        TestMethods.processOrderFromAdmin('refund');
+        TestMethods.processOrderFromAdmin('refund', currency);
     });
 
     /** Capture */
@@ -49,7 +49,7 @@ describe('paylike plugin quick test', () => {
 
     /** Partial refund last created order (previously captured). */
     it('Process last order captured from admin panel to be refunded', () => {
-        TestMethods.processOrderFromAdmin('refund', /*partialAmount*/ true);
+        TestMethods.processOrderFromAdmin('refund', currency, /*partialAmount*/ true);
     });
 
     /** Void */
