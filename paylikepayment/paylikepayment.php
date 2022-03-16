@@ -4,7 +4,6 @@
  * @author    DerikonDevelopment <ionut@derikon.com>
  * @copyright Copyright (c) permanent, DerikonDevelopment
  * @license   Addons PrestaShop license limitation
- * @version   1.0.6
  * @link      http://www.derikon.com/
  *
  */
@@ -26,7 +25,7 @@ class PaylikePayment extends PaymentModule {
 	public function __construct() {
 		$this->name = 'paylikepayment';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.0.6';
+		$this->version = '1.1.1';
 		$this->author = 'DerikonDevelopment';
 		$this->bootstrap = true;
 		$this->module_key = '1d083bab290f652fb6fb7ae35f9f0942';
@@ -269,25 +268,32 @@ class PaylikePayment extends PaymentModule {
 	public function renderCurrencyWarning() {
 		$currencies = Currency::getCurrencies();
 		$warning_currencies = array();
+		$warning_decimals = array();
 		foreach ( $currencies as $currency ) {
-			if ( $this->getPaylikeCurrencyMultiplier( $currency['iso_code'] ) == 1 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) != 0 ) {
+			if ( $this->getPaylikeCurrencyMultiplier( $currency['iso_code'] ) == 1 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) > 0 ) {
 				$warning_currencies[0][] = $currency['iso_code'];
-			} elseif ( $this->getPaylikeCurrencyMultiplier( $currency['iso_code'] ) == 10 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) != 1 ) {
+			} elseif ( $this->getPaylikeCurrencyMultiplier( $currency['iso_code'] ) == 10 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) > 1 ) {
 				$warning_currencies[1][] = $currency['iso_code'];
-			} elseif ( $this->getPaylikeCurrencyMultiplier( $currency['iso_code'] ) == 100 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) != 2 ) {
+			} elseif ( $this->getPaylikeCurrencyMultiplier( $currency['iso_code'] ) == 100 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) > 2 ) {
 				$warning_currencies[2][] = $currency['iso_code'];
-			} elseif ( $this->getPaylikeCurrencyMultiplier( $currency['iso_code'] ) == 1000 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) != 3 ) {
+			} elseif ( $this->getPaylikeCurrencyMultiplier( $currency['iso_code'] ) == 1000 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) > 3 ) {
 				$warning_currencies[3][] = $currency['iso_code'];
-			} elseif ( $this->getPaylikeCurrencyMultiplier( $currency['iso_code'] ) == 10000 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) != 4 ) {
+			} elseif ( $this->getPaylikeCurrencyMultiplier( $currency['iso_code'] ) == 10000 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) > 4 ) {
 				$warning_currencies[4][] = $currency['iso_code'];
 			}
+
+			if ( !$currency['decimals'] ) {
+				$warning_decimals[] = $currency['iso_code'];
+			}
 		}
-		if ( count( $warning_currencies ) ) {
+
+		if ( count( $warning_currencies ) || count( $warning_decimals ) ) {
 			$this->context->smarty->assign(
 				array(
 					'warning_currencies_decimal' => $warning_currencies,
-					'PS_PRICE_DISPLAY_PRECISION' => Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ),
-					'preferences_url'            => $this->context->link->getAdminLink( 'AdminPreferences' )
+					'warning_currencies_display_decimals' => $warning_decimals,
+					'preferences_url'            => $this->context->link->getAdminLink( 'AdminPreferences' ),
+					'currencies_url'             => $this->context->link->getAdminLink( 'AdminCurrencies' )
 				)
 			);
 
@@ -624,7 +630,7 @@ class PaylikePayment extends PaymentModule {
 
 	public function hookHeader() {
 		/*if(Configuration::get('PAYLIKE_STATUS') == 'enabled' && $this->context->controller->php_self == 'order') {
-            $this->context->controller->addJs('https://sdk.paylike.io/3.js');
+            $this->context->controller->addJs('https://sdk.paylike.io/6.js');
         }*/
 	}
 
@@ -682,15 +688,15 @@ class PaylikePayment extends PaymentModule {
 		$total = $cart->getOrderTotal( true, Cart::BOTH );
 		// echo "Total : ".$total;
 		//die();
-		if ( $this->getPaylikeCurrencyMultiplier( $this->context->currency->iso_code ) == 1 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) != 0 ) {
+		if ( $this->getPaylikeCurrencyMultiplier( $this->context->currency->iso_code ) == 1 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) > 0 ) {
 			return false;
-		} elseif ( $this->getPaylikeCurrencyMultiplier( $this->context->currency->iso_code ) == 10 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) != 1 ) {
+		} elseif ( $this->getPaylikeCurrencyMultiplier( $this->context->currency->iso_code ) == 10 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) > 1 ) {
 			return false;
-		} elseif ( $this->getPaylikeCurrencyMultiplier( $this->context->currency->iso_code ) == 100 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) != 2 ) {
+		} elseif ( $this->getPaylikeCurrencyMultiplier( $this->context->currency->iso_code ) == 100 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) > 2 ) {
 			return false;
-		} elseif ( $this->getPaylikeCurrencyMultiplier( $this->context->currency->iso_code ) == 1000 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) != 3 ) {
+		} elseif ( $this->getPaylikeCurrencyMultiplier( $this->context->currency->iso_code ) == 1000 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) > 3 ) {
 			return false;
-		} elseif ( $this->getPaylikeCurrencyMultiplier( $this->context->currency->iso_code ) == 10000 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) != 4 ) {
+		} elseif ( $this->getPaylikeCurrencyMultiplier( $this->context->currency->iso_code ) == 10000 && Configuration::get( 'PS_PRICE_DISPLAY_PRECISION' ) > 4 ) {
 			return false;
 		}
 		$currency = new Currency( (int) $params['cart']->id_currency );
@@ -715,6 +721,7 @@ class PaylikePayment extends PaymentModule {
 		}
 
 		$this->context->smarty->assign( array(
+			'active_status'             	 => Tools::getvalue( 'PAYLIKE_TRANSACTION_MODE' ),
 			'PAYLIKE_PUBLIC_KEY'             => $PAYLIKE_PUBLIC_KEY,
 			'PS_SSL_ENABLED'                 => ( Configuration::get( 'PS_SSL_ENABLED' ) ? 'https' : 'http' ),
 			'http_host'                      => Tools::getHttpHost(),
@@ -727,6 +734,7 @@ class PaylikePayment extends PaymentModule {
 			'popup_description'              => $popup_description,
 			'currency_code'                  => $currency_code,
 			'amount'                         => $amount,
+			'exponent'                       => $this->getPaylikeCurrency( $currency_code )['exponent'],
 			'id_cart'                        => Tools::jsonEncode( $params['cart']->id ),
 			'paylike_products'               => Tools::jsonEncode( $products_array ),
 			'name'                           => $name,
