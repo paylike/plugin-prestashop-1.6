@@ -101,10 +101,10 @@ export var TestMethods = {
         cy.goToPage(this.StoreUrl + '/quick-order');
 
         /** Agree Terms & Conditions. */
-        cy.get('#cgv').click();
+        cy.get('#cgv', {timeout: 10000}).click();
 
-        /** Wait amount to be available. */
-        cy.wait(1500);
+        /** Wait until amount can be accessed. */
+        cy.wait(2000);
 
         /** Check amount. */
         cy.get('#total_price').then($grandTotal => {
